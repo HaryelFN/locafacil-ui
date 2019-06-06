@@ -1,0 +1,87 @@
+<div class="ui-g">
+  <div class="ui-g-12">
+    <div class="card">
+      <div class="ui-g">
+
+        <div class="ui-g-8 ui-md-11">
+          <div style="position:relative">
+            <h1>Histórico Aluguéis</h1>
+          </div>
+        </div>
+
+        <div class="ui-g-12 ui-fluid">
+          <p-dropdown [autoWidth]="false" [options]="contratosOptions" [(ngModel)]="idContrato" filter="true" filterBy="find"
+            placeholder="Buscar por CPF, nome locatário ou logradouro..." (onChange)="findAlugueisByContrato()"></p-dropdown>
+        </div>
+
+        <p-table [value]="listObj" [responsive]="true" #tabela>
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 40px">#</th>
+              <th>Dt. Vencimento</th>
+              <th>Dt. Pagamento</th>
+              <th>Valor</th>
+              <!-- <th>UPTU</th> -->
+              <th>Desconto</th>
+              <th>T. Pago</th>
+              <th>Status</th>
+              <th class="col-acoes-header"></th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-obj let-i="rowIndex">
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td class="col-data-body">{{ obj.dtVencimento | date: 'dd/MM/yyyy' }}</td>
+              <td class="col-data-body">{{ (obj.dtPagamento != null) ? (obj.dtPagamento | date: 'dd/MM/yyyy') : "" }}</td>
+              <td class="col-right-body">{{ obj.valor | currency:'BRL':'R$':'1.2-2' }}</td>
+              <!-- <td class="col-right-body">{{ obj.iptu | currency:'BRL':'R$':'1.2-2' }}</td> -->
+              <td class="col-right-body">{{ obj.desconto | currency:'BRL':'R$':'1.2-2' }}</td>
+              <td class="col-right-body">{{ obj.total | currency:'BRL':'R$':'1.2-2' }}</td>
+              <td class="col-data-body" style="font-weight: bold" [style.color]="(obj.color)">{{ obj.status }}</td>
+              <td class="col-acoes">
+                <button pButton class="btn-acoes" icon="fa fa-arrow-right" pTooltip="Receber" tooltipPosition="top"
+                  [disabled]="(obj.status === 'Liquidado') ? true : false" (click)="openDialog(obj)"></button>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="8">
+                Selecione um locatário para buscar os aluguéis.
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+    <p-dialog header="Receber Aluguel" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true"
+      width="300" (onAfterHide)="onDialogHide()">
+      <div class="ui-g" *ngIf="selectedObj">
+        <div class="ui-g-4">Vencimento: </div>
+        <div class="ui-g-8" style="text-align: right;">{{ selectedObj.dtVencimento | date: 'dd/MM/yyyy' }}</div>
+
+        <div class="ui-g-4">Valor: </div>
+        <div class="ui-g-8" style="text-align: right">{{ selectedObj.valor | currency:'BRL':'R$':'1.2-2' }}</div>
+
+        <!-- <div class="ui-g-4">UPTU: </div>
+        <div class="ui-g-8" style="text-align: right">{{ selectedObj.iptu | currency:'BRL':'R$':'1.2-2' }}</div> -->
+
+        <div class="ui-g-4">Desconto: </div>
+        <div class="ui-g-8" style="text-align: right">{{ selectedObj.desconto | currency:'BRL':'R$':'1.2-2' }}</div>
+
+        <div class="ui-g-4">Total: </div>
+        <div class="ui-g-8" style="text-align: right; font-weight: bold">{{ selectedObj.total | currency:'BRL':'R$':'1.2-2' }}</div>
+      </div>
+
+      <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="receber(selectedObj)" label="Receber"></button>
+        <button type="button" pButton icon="fa fa-times" (click)="onDialogHide()" label="Cancelar" class="ui-button-secondary"></button>
+      </p-footer>
+
+    </p-dialog>
+
+  </div>
+</div>

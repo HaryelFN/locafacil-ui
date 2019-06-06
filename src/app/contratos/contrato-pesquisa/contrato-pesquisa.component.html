@@ -1,0 +1,67 @@
+<div class="ui-g">
+  <div class="ui-g-12">
+    <div class="card">
+      <div class="ui-g">
+        <div class="ui-g-8 ui-md-11">
+          <div style="position:relative">
+            <h1>Contratos</h1>
+          </div>
+        </div>
+        <div class="ui-g-4 ui-md-1">
+          <button pButton type="button" icon="pi pi-plus" label="Novo" [routerLink]="['/contratos/novo']" routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact:true}"></button>
+        </div>
+      </div>
+
+      <p-table [value]="listObj" [responsive]="true" #tabela [globalFilterFields]="['locatario.nome', 'locatario.cpf', 'imovel.logradouro', 'imovel.bairro']">
+
+        <ng-template pTemplate="caption">
+          <div class="ui-g">
+            <!-- <div class="ui-g-12 ui-md-9 ui-md-offset-3"> -->
+              <div class="ui-g-12 ui-fluid">
+              <div style="text-align: right">
+                <input type="text" size="30.em" pInputText placeholder="Buscar..." (input)="tabela.filterGlobal($event.target.value, 'contains')">
+              </div>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 40px">#</th>
+            <th class="col-data-header">Dt. Inicio</th>
+            <th class="col-data-header">Dt. Fim</th>
+            <th class="col-valor-header">Valor Aluguel</th>
+            <th>Locatário</th>
+            <th>Imovél</th>
+            <th style=" width: 100px;"></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-obj let-i="rowIndex">
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td class="col-data-body">{{ obj.dataInicio | date: 'dd/MM/yyyy' }}</td>
+            <td class="col-data-body">{{ obj.dataFim | date: 'dd/MM/yyyy' }}</td>
+            <td class="col-valor-body">{{ obj.valorAluguel | currency:'BRL':'R$':'1.2-2' }}</td>
+            <td>{{ obj.locatario1.nome }}</td>
+            <td>{{ obj.imovel.logradouro }}</td>
+            <td class="col-acoes3">
+              <a pButton class="btn-acoes" style="margin-right: .25em" icon="fa fa-search" pTooltip="Detalhes" tooltipPosition="top" [routerLink]="['/contratos', obj.id]"></a>
+              <button pButton class="col-acoes3" style="margin-right: .25em" icon="fa fa-download" pTooltip="Download PDF" tooltipPosition="top" (click)="onDownContrato(obj.id)"></button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">
+              Nenhum contrato encontrado.
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+    </div>
+  </div>
+</div>

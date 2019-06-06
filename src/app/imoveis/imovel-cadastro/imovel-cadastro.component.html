@@ -1,0 +1,259 @@
+<div class="ui-fluid">
+  <div class="ui-g">
+    <div class="ui-g-12">
+
+      <div class="card no-margin">
+        <h1>{{ edit ? 'Detalhes' : 'Cadastrar' }} Imóvel</h1>
+
+        <form class="ui-g form-group" autocomplete="off" [formGroup]="formulario" (ngSubmit)="onSave()">
+
+          <div class="ui-g-12 ui-md-6">
+
+            <div class="ui-g-12 ui-md-4">
+              <label>CEP</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-inputMask mask="99.999-999" formControlName="cep" (onBlur)="searchCep()"></p-inputMask>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="dropdown">UF</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-dropdown id="dropdown" formControlName="uf" placeholder="Selecione" [options]="ufs" [autoWidth]="false"></p-dropdown>
+              <div *ngIf="submitted && f.uf.errors">
+                <div *ngIf="f.uf.errors.required" class="ui-message ui-messages-error ui-corner-all">Selecione UF.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="cidade">Cidade</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="cidade" type="text" formControlName="cidade" (change)="myClick($event);" />
+              <div *ngIf="submitted && f.cidade.errors">
+                <div *ngIf="f.cidade.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe a
+                  cidade.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="bairro">Bairro</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="bairro" type="text" formControlName="bairro" (change)="myClick($event);" />
+              <div *ngIf="submitted && f.bairro.errors">
+                <div *ngIf="f.bairro.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe o
+                  bairro.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="logradouro">Logradouro</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="logradouro" type="text" formControlName="logradouro" (change)="myClick($event);" />
+              <div *ngIf="submitted && f.logradouro.errors">
+                <div *ngIf="f.logradouro.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe o
+                  logradouro.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="numero">Número</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="numero" type="text" formControlName="numero" />
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="complemento">Complemento</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="complemento" type="text" formControlName="complemento" />
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="mapa">Mapa</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <agm-map id="mapa" [(latitude)]="location.lat" [(longitude)]="location.lng" [(zoom)]="location.zoom"
+                [disableDefaultUI]="true" [zoomControl]="true" [(fitBounds)]='location.viewport'>
+                <agm-marker [(latitude)]="location.marker.lat" [(longitude)]="location.marker.lng" [markerDraggable]="location.marker.draggable"></agm-marker>
+              </agm-map>
+            </div>
+
+          </div>
+
+          <div class="ui-g-12 ui-md-6">
+
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="proprietario">Proprietário</label>
+            </div>
+            <div class="ui-g-12 ui-md-8" formGroupName="proprietario">
+              <p-dropdown id="proprietario" [autoWidth]="false" [options]="proprietariosOptions" formControlName="id" filter="true" placeholder="selecione"></p-dropdown>
+              <div *ngIf="submitted && formulario.get('proprietario.id').value == null">
+                <div class="ui-message ui-messages-error ui-corner-all">Selecione o proprietário.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="tipoImovel">Tipo Imóvel</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-dropdown id="tipoImovel" formControlName="tipoImovel" placeholder="Selecione" [options]="tiposImovel"
+                [autoWidth]="false"></p-dropdown>
+              <div *ngIf="submitted && f.tipoImovel.errors">
+                <div *ngIf="f.tipoImovel.errors.required" class="ui-message ui-messages-error ui-corner-all">Selecione
+                  tipo imóvel. </div>
+              </div>
+            </div>
+
+            <div *ngIf="formulario.get('tipoImovel').value !== 'Comércio'">
+              <div class="ui-g-12 ui-md-4">
+                <label for="qtdQuarto">Qtd. Quarto(s)</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <p-spinner id="qtdQuarto" formControlName="qtdQuarto" [min]="0"></p-spinner>
+              </div>
+            </div>
+
+            <div *ngIf="formulario.get('tipoImovel').value !== 'Comércio'">
+              <div class="ui-g-12 ui-md-4">
+                <label for="qtdSuite">Qtd. Suite(s)</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <p-spinner id="qtdSuite" formControlName="qtdSuite" [min]="0"></p-spinner>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="qtdBanheiro">Qtd. Banheiro(s)</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-spinner id="qtdBanheiro" formControlName="qtdBanheiro" [min]="1"></p-spinner>
+              <div *ngIf="submitted && f.qtdBanheiro.errors">
+                <div *ngIf="f.qtdBanheiro.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe
+                  qtd. banheiro(s).
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="formulario.get('tipoImovel').value !== 'Comércio'">
+              <div class="ui-g-12 ui-md-4">
+                <label for="qtdSala">Qtd. Sala(s)</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <p-spinner id="qtdSala" formControlName="qtdSala" [min]="0"></p-spinner>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="qtdGaragem">Qtd. Garagem(s)</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-spinner id="qtdGaragem" formControlName="qtdGaragem" [min]="0"></p-spinner>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="acessorios">Acessórios</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <textarea pInputTextarea id="acessorios" style="width: 100%;" [rows]="4" [cols]="1" autoResize="autoResize"
+                formControlName="acessorios"></textarea>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="valorAluguel">Sugestão Aluguel</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="valorAluguel" type="text" formControlName="valorAluguel" currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
+              <div *ngIf="submitted && f.valorAluguel.errors">
+                <div *ngIf="f.valorAluguel.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe o valor.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="valorCondominio">Valor Condomínio</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="valorCondominio" type="text" formControlName="valorCondominio" currencyMask
+                [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="areaTerreno">Área Terreno (m²)</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-spinner id="areaTerreno" formControlName="areaTerreno" [min]="0"></p-spinner>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="areaConstruida">Área Construída (m²)</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-spinner id="areaConstruida" formControlName="areaConstruida" [min]="0"></p-spinner>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="valorIptu">Valor IPTU</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="valorIptu" type="text" formControlName="valorIptu" currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
+              <div *ngIf="submitted && f.valorIptu.errors">
+                <div *ngIf="f.valorIptu.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe o
+                  valor do último IPTU.
+                </div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="fotos">Fotos</label>
+              <p-progressSpinner [hidden]="!loadingUpload" [style]="{ width: '25px', height: '25px' }"></p-progressSpinner>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <div *ngIf="!openGallery">
+                <p-fileUpload id="fotos" name="anexos" chooseLabel="Anexar" multiple="multiple" accept="image/*"
+                  maxFileSize="3000000" [url]="urlUploadFile" (onUpload)="onUpload($event)" (onBeforeSend)="beforeUploadFile($event)"
+                  (onError)="erroUpload($event)" invalidFileSizeMessageDetail='maximum upload size is {0}.'>
+                </p-fileUpload>
+              </div>
+
+              <div *ngIf="openGallery">
+                <p-lightbox [images]="images"></p-lightbox>
+                <button pButton type="button" class="ui-button-secondary" icon="fa fa-times" label="Remover" (click)="removeAnexo()"></button>
+              </div>
+            </div>
+
+            <!-- <div class="ui-g-12 ui-md-4">
+              <label for="fotos">Fotos</label>
+              <p-progressSpinner [hidden]="!loadingUpload" [style]="{ width: '25px', height: '25px' }"></p-progressSpinner>
+            </div>
+
+            <div class="ui-g-12 ui-md-8">
+              <file-upload></file-upload>
+            </div> -->
+
+          </div>
+
+          <div class="ui-g-12 ui-md-2 ">
+            <button pButton type="button" icon="fa fa-arrow-left" label="Voltar" class="ui-button-info" [routerLink]="[ '/imoveis'] "></button>
+          </div>
+
+          <div class="ui-md-offset-6 "></div>
+
+          <div *ngIf="edit " class="ui-g-12 ui-md-2 ">
+            <button pButton type="button" icon="fa fa-trash-o" class="ui-button-danger" label="Excluir" (click)="confirmDelete()"
+              [disabled]="!auth.temPermissao( 'ROLE_REMOVER_IMOVEL') "></button>
+          </div>
+
+          <div class="ui-g-12 ui-md-2 ">
+            <button pButton type="submit" icon="{{ edit ? 'fa fa-pencil' : 'pi pi-plus' }}" label="{{ edit ? 'Editar' : 'Cadastrar' }}"></button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

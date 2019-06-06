@@ -1,0 +1,27 @@
+<div class="layout-topbar">
+  <div class="layout-topbar-content">
+    <a href="#" id="menu-btn" class="menu-btn" (click)="app.onMobileMenuButton($event)">
+      <i class="fa fa-bars"></i>
+    </a>
+    <img src="assets/layout/images/logo.png" class="topbar-logo">
+
+    <p-menu #menu popup="popup" [model]="items"></p-menu>
+    <button pButton *ngIf="exibindoTopBar()" class="topbar-button" type="button" icon="fa fa-cog" (click)="menu.toggle($event)"></button>
+  </div>
+</div>
+
+<p-dialog header="Detalhes Usuário" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" width="300"
+  (onAfterHide)="onDialogHide()">
+  <div class="ui-g" *ngIf="usuario">
+
+    <div class="ui-g-12" style="text-align:center">
+      <img src="assets/layout/images/user.png">
+    </div>
+
+    <div class="ui-g-4">Perfil: </div>
+    <div class="ui-g-8">{{usuario.nome}}</div>
+
+    <div class="ui-g-4">Nome: </div>
+    <div class="ui-g-8">{{usuario.user_name}}</div>
+  </div>
+</p-dialog>

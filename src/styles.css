@@ -1,0 +1,21 @@
+/* You can add global styles to this file, and also import other style files */
+
+.ui-messages-error {
+    background-color: #FFA07A;
+}
+
+.ui-toast-message-info {
+    background-color: #7FBCEC;
+}
+
+.ui-toast-message-success {
+    background-color: #B7D8B7;
+}
+
+.ui-toast-message-warn {
+    background-color: #FFE399;
+}
+
+.ui-toast-message-error {
+    background-color: #F8B7BD;
+}

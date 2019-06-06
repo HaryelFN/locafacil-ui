@@ -1,0 +1,277 @@
+<div class="ui-fluid">
+  <div class="ui-g">
+    <div class="ui-g-12">
+
+      <div class="card no-margin">
+        <h1>{{ edit ? 'Detalhes' : 'Cadastrar' }} Contrato</h1>
+
+        <form class="ui-g form-group" autocomplete="off" [formGroup]="formulario" (ngSubmit)="salvar()">
+
+          <div class="ui-g-12 ui-md-6">
+
+            <p-fieldset legend="Info. Contrato">
+              <div class="ui-g-12 ui-md-4">
+                <label for="imovel">Imóvel</label>
+              </div>
+              <div class="ui-g-12 ui-md-8" formGroupName="imovel">
+                <p-dropdown id="imovel" [autoWidth]="false" [options]="imoveisOptions" formControlName="id" filter="true"
+                  placeholder="selecione" (onChange)="findAluguel()"></p-dropdown>
+                <div *ngIf="submitted && formulario.get('imovel.id').value == null">
+                  <div class="ui-message ui-messages-error ui-corner-all">Selecione o imóvel.</div>
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="dataInicio">Início Contrato</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <p-calendar id="dataInicio" formControlName="dataInicio" [touchUI]="detectmob()" [readonlyInput]="true"
+                  [locale]="pt" dateFormat="dd/mm/yy" [showIcon]="true" (onSelect)="calData($event)"></p-calendar>
+                <div *ngIf="submitted && f.dataInicio.errors">
+                  <div *ngIf="f.dataInicio.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe
+                    a data.
+                  </div>
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="duracao">Duração</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <p-dropdown [options]="duracaoOptions" formControlName="duracao" placeholder="Selecione" [autoWidth]="false" (onChange)="calData($event)"></p-dropdown>
+                <div *ngIf="submitted && f.duracao.errors">
+                  <div *ngIf="f.duracao.errors.required" class="ui-message ui-messages-error ui-corner-all">Selecione a duração.
+                  </div>
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="dataFim">Fim Contrato</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <p-calendar id="dataFim" formControlName="dataFim" [readonlyInput]="true" [locale]="pt" dateFormat="dd/mm/yy"
+                  [showIcon]="true" [disabled]="true"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="valorAluguel">Valor Aluguel</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <input pInputText id="valorAluguel" type="text" formControlName="valorAluguel" (keypress)="calcCaucao()"
+                  currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
+                <div *ngIf="submitted && f.valorAluguel.errors">
+                  <div *ngIf="f.valorAluguel.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe
+                    o valor.
+                  </div>
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="diaVencimento">Dia Vencimento</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <p-calendar id="diaVencimento" formControlName="diaVencimento" [touchUI]="detectmob()" [readonlyInput]="true"
+                  [locale]="pt" dateFormat="dd/mm/yy" [showIcon]="true" [minDate]="minDate" [maxDate]="maxDate"></p-calendar>
+                <div *ngIf="submitted && f.diaVencimento.errors">
+                  <div *ngIf="f.diaVencimento.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe
+                    o vencimento do aluguel.
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="this.formulario.get('imovel.id').value">
+                <div class="ui-g-12 ui-md-4">
+                  <label for="agregarIptu">IPTU?</label>
+                </div>
+                <div class="ui-g-12 ui-md-8">
+                  <div class="ui-g-12 ui-md-4">
+                    <p-radioButton name="group1" value="V" label="Sim" formControlName="agregarIptu" (onClick)="calcIPTU()"></p-radioButton>
+                  </div>
+                  <div class="ui-g-12 ui-md-4 ui-md-offset-1">
+                    <p-radioButton name="group1" value="F" label="Não" formControlName="agregarIptu"></p-radioButton>
+                  </div>
+                  <!-- <input pInputText [disabled]="true" *ngIf="formulario.get('agregarIptu').value === 'V'" [ngModelOptions]="{standalone: true}" 
+                  [(ngModel)]="resultIptu" currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" /> -->
+                </div>
+
+                <div class="ui-g-12 ui-md-4">
+                  <label for="caucao">Caução?</label>
+                </div>
+                <div class="ui-g-12 ui-md-8">
+                  <div class="ui-g-12 ui-md-4">
+                    <p-radioButton name="group2" value="V" label="Sim" formControlName="caucao" (onClick)="calcCaucao()"></p-radioButton>
+                  </div>
+                  <div class="ui-g-12 ui-md-4 ui-md-offset-1">
+                    <p-radioButton name="group2" value="F" label="Não" formControlName="caucao"></p-radioButton>
+                  </div>
+                  <input pInputText [disabled]="true" *ngIf="formulario.get('caucao').value === 'V'" [ngModelOptions]="{standalone: true}"
+                    [(ngModel)]="valueCaucao" currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-4 ">
+                <label for="obs ">Obs</label>
+              </div>
+              <div class="ui-g-12 ui-md-8 ">
+                <textarea pInputTextarea id="obs" style="width: 100%;" [rows]="3" [cols]="1" autoResize="autoResize"
+                  formControlName="obs"></textarea>
+              </div>
+            </p-fieldset>
+
+          </div>
+
+          <div class="ui-g-12 ui-md-6">
+
+            <p-fieldset legend="Locatários">
+              <div class="ui-g-12 ui-md-4">
+                <label for="locatario1">1° Locatário</label>
+              </div>
+              <div class="ui-g-12 ui-md-8" formGroupName="locatario1">
+                <p-dropdown id="locatario1" [autoWidth]="false" [options]="locatariosOptions" formControlName="id"
+                  filter="true" filterBy="find" filterPlaceholder="Buscar pelo CPF..." placeholder="selecione" (onChange)="isContrato()"></p-dropdown>
+                <div *ngIf="submitted && formulario.get('locatario1.id').value == null">
+                  <div class="ui-message ui-messages-error ui-corner-all">Selecione o locatário.</div>
+                </div>
+              </div>
+
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="locatario2" pTooltip="Locatário opcional." tooltipPosition="top">2° Locatário?</label>
+              </div>
+              <div class="ui-g-12 ui-md-8" formGroupName="locatario2">
+                <p-dropdown id="locatario2" [autoWidth]="false" [options]="locatariosOptions" formControlName="id"
+                  filter="true" filterBy="find" filterPlaceholder="Buscar pelo CPF..." placeholder="selecione"></p-dropdown>
+              </div>
+            </p-fieldset>
+
+            <br>
+
+            <div *ngIf="formulario.get('caucao').value !== 'V'">
+              <p-fieldset legend="Fiador" [toggleable]="true" [(collapsed)]="closeFiador">
+                <div class="ui-g-12 ui-md-4">
+                  <label for="fiador">Fiador</label>
+                </div>
+                <div class="ui-g-12 ui-md-8" formGroupName="fiador">
+                  <p-dropdown id="fiador" [autoWidth]="false" [options]="fiadoresOptions" formControlName="id" filter="true"
+                    filterBy="find" placeholder="selecione"></p-dropdown>
+                  <div *ngIf="!closeFiador && formulario.get('fiador.id').value == null">
+                    <div class="ui-message ui-messages-error ui-corner-all">Selecione o fiador.</div>
+                  </div>
+                </div>
+              </p-fieldset>
+
+              <br>
+            </div>
+
+            <p-fieldset legend="Locador/Procurador">
+              <div class="ui-g-12 ui-md-4">
+                <label for="fiador">Locador</label>
+              </div>
+              <div class="ui-g-12 ui-md-8" formGroupName="locador">
+                <p-dropdown [disabled]="true" id="locador" [autoWidth]="false" [options]="locadoresOptions"
+                  formControlName="id" filter="true" placeholder="selecione"></p-dropdown>
+                <div *ngIf="submitted && formulario.get('locador.id').value == null">
+                  <div class="ui-message ui-messages-error ui-corner-all">Selecione o locador.</div>
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="procurador">Procurador</label>
+              </div>
+              <div class="ui-g-12 ui-md-8" formGroupName="procurador">
+                <p-dropdown id="procurador" [autoWidth]="false " [options]="procuradoresOptions" formControlName="id"
+                  filter="true" placeholder="selecione"></p-dropdown>
+              </div>
+            </p-fieldset>
+
+          </div>
+
+          <br>
+
+          <div class="ui-g-12 ui-md-2">
+            <button pButton type="button" icon="fa fa-arrow-left" label="Voltar" class="ui-button-info" [routerLink]="[ '/contratos']"></button>
+          </div>
+          <div class="ui-md-offset-6"></div>
+          <div class="ui-g-12 ui-md-2">
+            <button pButton *ngIf="showBtn()" type="button" icon="fa fa-refresh" label="Renovar" (click)="openDialog()"></button>
+          </div>
+          <div class="ui-g-12 ui-md-2">
+            <button pButton type="submit" icon="{{ edit ? 'fa fa-trash-o' : 'pi pi-plus' }}" label="{{ edit ? 'Exluir' : 'Cadastrar' }}"></button>
+          </div>
+
+
+          <p-dialog header="Renovar Contrato" [(visible)]="displayDialog" [modal]="true" [responsive]="true" showEffect="fade"
+            [modal]="true" width="360" (onAfterHide)="onDialogHide()">
+            <div class="ui-g" *ngIf="contratoSelected">
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="dataInicio">Início Contrato</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <p-calendar id="dataInicio" formControlName="dataInicio" [readonlyInput]="true" [locale]="pt"
+                  dateFormat="dd/mm/yy" [showIcon]="true" (onSelect)="calData($event)"></p-calendar>
+                <div *ngIf="submitted && f.dataInicio.errors">
+                  <div *ngIf="f.dataInicio.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe
+                    a data.
+                  </div>
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="duracao">Duração</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <p-spinner id="duracao" type="number" formControlName="duracao" [step]="1" [min]="1" (onChange)="calData($event)"></p-spinner>
+                <div *ngIf="submitted && f.duracao.errors">
+                  <div *ngIf="f.duracao.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe a
+                    duração.
+                  </div>
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="dataFim">Fim Contrato</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <p-calendar id="dataFim" formControlName="dataFim" [readonlyInput]="true" [locale]="pt" dateFormat="dd/mm/yy"
+                  [showIcon]="true" [disabled]="true"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="valorAluguel">Valor Aluguel</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <input pInputText id="valorAluguel" type="text" formControlName="valorAluguel" currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
+                <div *ngIf="submitted && f.valorAluguel.errors">
+                  <div *ngIf="f.valorAluguel.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe
+                    o valor.
+                  </div>
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-4">
+                <label for="diaVencimento">Dia Vencimento</label>
+              </div>
+              <div class="ui-g-12 ui-md-8">
+                <p-calendar id="diaVencimento" formControlName="diaVencimento" [readonlyInput]="true" [locale]="pt"
+                  dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
+                <div *ngIf="submitted && f.diaVencimento.errors">
+                  <div *ngIf="f.diaVencimento.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe
+                    o vencimento do aluguel.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p-footer>
+              <button type="button" pButton icon="pi pi-check" (click)="onRenovar()" label="Renovar"></button>
+              <button type="button" pButton icon="fa fa-times" (click)="onDialogHide()" label="Cancelar" class="ui-button-secondary"></button>
+            </p-footer>
+
+          </p-dialog>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,191 @@
+<div class="ui-fluid">
+  <div class="ui-g">
+    <div class="ui-g-12">
+
+      <div class="card no-margin">
+        <h1>{{ edit ? 'Editar' : 'Cadastrar' }} {{ title }}</h1>
+
+        <form class="ui-g form-group" autocomplete="off" [formGroup]="formulario" (ngSubmit)="onSave()">
+
+          <div class="ui-g-12 ui-md-6">
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="sexo">Sexo</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-dropdown id="sexo" formControlName="sexo" placeholder="Selecione" [options]="sexo" [autoWidth]="false"></p-dropdown>
+              <div *ngIf="submitted && f.sexo.errors">
+                <div *ngIf="f.sexo.errors.required" class="ui-message ui-messages-error ui-corner-all">Selecione sexo.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="nome">Nome</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="nome" type="text" formControlName="nome" />
+              <div *ngIf="submitted && f.nome.errors">
+                <div *ngIf="f.nome.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe o nome.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="rg">RG</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="rg" type="text" formControlName="rg" />
+              <div *ngIf="submitted && f.rg.errors">
+                <div *ngIf="f.rg.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe o RG.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="cpf">CPF</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-inputMask id="cpf" mask="999.999.999-99" formControlName="cpf" (onBlur)="isCpf()" (onComplete)="removeChars()"></p-inputMask>
+              <div *ngIf="submitted && f.cpf.errors">
+                <div *ngIf="f.cpf.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe o CPF</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="estadoCivil">Estado Civil</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-dropdown id="estadoCivil" formControlName="estadoCivil" placeholder="Selecione" [options]="estadosCivis"
+                [autoWidth]="false"></p-dropdown>
+              <div *ngIf="submitted && f.estadoCivil.errors">
+                <div *ngIf="f.estadoCivil.errors.required" class="ui-message ui-messages-error ui-corner-all">Selecione
+                  estado civil.
+                </div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="nacionalidade">Nacionalidade</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="nacionalidade" type="text" formControlName="nacionalidade" />
+              <div *ngIf="submitted && f.nacionalidade.errors">
+                <div *ngIf="f.nacionalidade.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe
+                  a nacionalidade.
+                </div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="profissao">Profissão</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="profissao" type="text" formControlName="profissao" />
+              <div *ngIf="submitted && f.profissao.errors">
+                <div *ngIf="f.profissao.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe a
+                  profissão.</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="ui-g-12 ui-md-6">
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="telefone">Telefone</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-inputMask id="telefone" mask="(99)99999-999?9" formControlName="telefone"></p-inputMask>
+              <div *ngIf="submitted && f.telefone.errors">
+                <div *ngIf="f.telefone.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe o
+                  telefone.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="email">E-mail</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="email" type="text" formControlName="email" />
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label>CEP</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-inputMask mask="99.999-999" formControlName="cep" (onBlur)="searchCep()"></p-inputMask>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="dropdown">UF</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <p-dropdown id="dropdown" formControlName="uf" placeholder="Selecione" [options]="ufs" [autoWidth]="false"></p-dropdown>
+              <div *ngIf="submitted && f.uf.errors">
+                <div *ngIf="f.uf.errors.required" class="ui-message ui-messages-error ui-corner-all">Selecione UF.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="cidade">Cidade</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="cidade" type="text" formControlName="cidade" />
+              <div *ngIf="submitted && f.cidade.errors">
+                <div *ngIf="f.cidade.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe a
+                  cidade.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="bairro">Bairro</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="bairro" type="text" formControlName="bairro" />
+              <div *ngIf="submitted && f.bairro.errors">
+                <div *ngIf="f.bairro.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe o
+                  bairro.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="logradouro">Logradouro</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="logradouro" type="text" formControlName="logradouro" />
+              <div *ngIf="submitted && f.logradouro.errors">
+                <div *ngIf="f.logradouro.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe o
+                  logradouro.</div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="numero">Número</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="numero" type="text" formControlName="numero" />
+            </div>
+
+            <div class="ui-g-12 ui-md-4">
+              <label for="complemento">Complemento</label>
+            </div>
+            <div class="ui-g-12 ui-md-8">
+              <input pInputText id="complemento" type="text" formControlName="complemento" />
+            </div>
+
+          </div>
+
+          <div class="ui-g-12 ui-md-2">
+            <button pButton type="button" icon="fa fa-arrow-left" label="Voltar" class="ui-button-info" [routerLink]="['/locadores']"></button>
+          </div>
+
+          <div class="ui-md-offset-8"></div>
+
+          <div class="ui-g-12 ui-md-2">
+            <button pButton type="submit" icon="{{ edit ? 'fa fa-pencil' : 'pi pi-plus' }}" label="{{ edit ? 'Editar' : 'Cadastrar' }}"
+              [disabled]="!formulario.dirty"></button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<div class="ui-g">
+  <div class="ui-g-12">
+    <div class="card">
+      <div class="ui-g">
+        <div class="ui-g-8 ui-md-11">
+          <div style="position:relative">
+            <h1>Locatários</h1>
+          </div>
+        </div>
+        <div class="ui-g-4 ui-md-1">
+          <button pButton type="button" icon="pi pi-plus" label="Novo" [routerLink]="['/locatarios/novo']"
+            routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"></button>
+        </div>
+      </div>
+
+      <p-table [value]="listObj" [responsive]="true" #tabela [globalFilterFields]="['nome', 'rg', 'cpf']">
+
+        <ng-template pTemplate="caption">
+          <div class="ui-g">
+            <!-- <div class="ui-g-12 ui-md-3">
+              <div style="text-align: left">
+                <p-dropdown [options]="sortOptions" placeholder="Ordenar por" (onChange)="tabela.filter($event.value, 'situacao', 'equals')"></p-dropdown>
+              </div>
+            </div> -->
+
+            <!-- <div class="ui-g-12 ui-md-6 ui-md-offset-6"> -->
+            <div class="ui-g-12 ui-fluid">
+              <div style="text-align: right">
+                <input type="text" size="30.em" pInputText placeholder="Buscar..." (input)="tabela.filterGlobal($event.target.value, 'contains')">
+              </div>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 40px">#</th>
+            <th>Nome</th>
+            <th style="width: 160px">RG</th>
+            <th style="width: 170px">CPF</th>
+            <th style="width: 200px">Profissão</th>
+            <th class="col-acoes-header2"></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-obj let-i="rowIndex">
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td>{{ obj.nome }}</td>
+            <td class="col-data-center">{{ obj.rg }}</td>
+            <td class="col-data-center">{{ obj.cpf | cpfCnpj }}</td>
+            <td class="col-data-center">{{ obj.profissao }}</td>
+            <td class="col-acoes">
+              <a pButton class="btn-acoes2" style="margin-right: .25em" icon="fa fa-pencil" pTooltip="Editar"
+                tooltipPosition="top" [routerLink]="['/locatarios', obj.id]"></a>
+
+              <button pButton class="btn-acoes2" style="margin-right: .25em" icon="fa fa-trash" pTooltip="Excluir"
+                tooltipPosition="top" (click)="confirmDelete(obj)" [disabled]="!auth.temPermissao('ROLE_REMOVER_LOCATARIO')"></button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6">
+              Nenhum locatário encontrado.
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

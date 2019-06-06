@@ -1,0 +1,77 @@
+<div class="layout-sidebar" [ngClass]="{'layout-sidebar-active':app.mobileMenuActive}">
+  <ul class="layout-menu" (click)="app.hideMobileMenu($event)">
+
+    <li>
+      <a [routerLink]="['/dashbord']" routerLinkActive="active" *ngIf="auth.temPermissao('ROLE_PESQUISAR_DASHBORD')"
+        [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-line-chart"></i>
+        <span>Notificações</span>
+      </a>
+    </li>
+
+    <li>
+      <a [routerLink]="['/repasses']" routerLinkActive="active" *ngIf="auth.temPermissao('ROLE_PESQUISAR_REPASSE')"
+        [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-arrows-h"></i>
+        <span>Repasses</span>
+      </a>
+    </li>
+
+    <li>
+      <a [routerLink]="['/alugueis']" routerLinkActive="active" *ngIf="auth.temPermissao('ROLE_PESQUISAR_ALUGUEL')"
+        [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-money"></i>
+        <span>Aluguéis</span>
+      </a>
+    </li>
+
+    <li>
+      <a [routerLink]="['/contratos']" routerLinkActive="active" *ngIf="auth.temPermissao('ROLE_PESQUISAR_CONTRATO')"
+        [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-file-text"></i>
+        <span>Contratos</span>
+      </a>
+    </li>
+
+    <li>
+      <a [routerLink]="['/locatarios']" routerLinkActive="active" *ngIf="auth.temPermissao('ROLE_PESQUISAR_LOCATARIO')"
+        [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-users"></i>
+        <span>Locatários</span>
+      </a>
+    </li>
+
+    <li>
+      <a [routerLink]="['/fiadores']" routerLinkActive="active" *ngIf="auth.temPermissao('ROLE_PESQUISAR_FIADOR')"
+        [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-handshake-o"></i>
+        <span>Fiadores</span>
+      </a>
+    </li>
+
+    <li>
+      <a [routerLink]="['/imoveis']" routerLinkActive="active" *ngIf="auth.temPermissao('ROLE_PESQUISAR_IMOVEL')"
+        [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-home"></i>
+        <span>Imóveis</span>
+      </a>
+    </li>
+
+    <li>
+      <a [routerLink]="['/locadores']" routerLinkActive="active" *ngIf="auth.temPermissao('ROLE_PESQUISAR_LOCADOR')"
+        [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-user"></i>
+        <span>Locadores</span>
+      </a>
+    </li>
+
+    <li>
+      <a [routerLink]="['/procuradores']" routerLinkActive="active" *ngIf="auth.temPermissao('ROLE_PESQUISAR_PROCURADOR')"
+        [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-male"></i>
+        <span>Procuradores</span>
+      </a>
+    </li>
+
+  </ul>
+</div>

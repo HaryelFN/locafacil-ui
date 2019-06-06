@@ -1,0 +1,208 @@
+<div class="ui-g">
+    <div class="ui-g-12">
+        <div class="card">
+            <div class="ui-g">
+                <div class="ui-g-8 ui-md-11">
+                    <div style="position:relative">
+                        <h1>Imóveis</h1>
+                    </div>
+                </div>
+                <div class="ui-g-4 ui-md-1">
+                    <button pButton type="button" icon="pi pi-plus" label="Novo" [routerLink]="['/imoveis/novo']"
+                        routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"></button>
+                </div>
+            </div>
+
+            <p-table [value]="listObj" [responsive]="true" #tabela [globalFilterFields]="['logradouro', 'bairro']">
+
+                <ng-template pTemplate="caption">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-3">
+                            <div style="text-align: left">
+                                <p-dropdown [options]="sortOptions" placeholder="Ordenar por" (onChange)="tabela.filter($event.value, 'situacao', 'equals')"></p-dropdown>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-4 ui-md-offset-5">
+                            <div style="text-align: right">
+                                <input type="text" size="22.em" pInputText placeholder="Buscar..." (input)="tabela.filterGlobal($event.target.value, 'contains')">
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 40px">#</th>
+                        <th style="width: 100px">Situação</th>
+                        <th>Lougradouro</th>
+                        <th style="width: 250px">Bairro</th>
+                        <th style="width: 120px">Tipo</th>
+                        <th class="col-acoes-header3"></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-obj let-i="rowIndex">
+                    <tr>
+                        <td>{{ i + 1 }}</td>
+                        <td class="col-data-center" style="font-weight: bold" [style.color]="obj.situacao === 'ocupado' ? '#4682B4' : '#008B8B'">{{
+                            obj.situacao }}</td>
+                        <td>{{ obj.logradouro }} {{ obj.referencia }}</td>
+                        <td class="col-data-center">{{ obj.bairro }}</td>
+                        <td class="col-data-center">{{ obj.tipoImovel }}</td>
+                        <td class="col-acoes3">
+                            <a pButton icon="fa fa-search" pTooltip="Detalhes" tooltipPosition="top" [routerLink]="['/imoveis', obj.id]"></a>
+                            <a pButton style="margin-left: 4px" icon="fa fa-external-link-square" pTooltip="Despesas Imóvel"
+                                tooltipPosition="top" (click)="openDialogDespesas(obj.id)"></a>
+                            <a pButton style="margin-left: 4px" icon="fa fa-history" pTooltip="Histórico Contratos"
+                                tooltipPosition="top" (click)="openDialogContratos(obj.id)"></a>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="6">
+                            Nenhum imóvel encontrado.
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog header="Despesas Imóvel" [(visible)]="dialogDespesas" [modal]="true" [responsive]="true" showEffect="fade"
+            [modal]="true" width="700" (onAfterHide)="onDialogHideDespesas()">
+
+            <div class="ui-g-12 ui-md-12">
+                <p-table [value]="listDespesas" [responsive]="true" [scrollable]="true" scrollHeight="200px">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 40px">#</th>
+                            <th>Descrição</th>
+                            <th style="width: 110px">Data</th>
+                            <th style="width: 110px">Valor</th>
+                            <th style="width: 50px"></th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-obj let-i="rowIndex">
+                        <tr>
+                            <td style="width: 40px">{{ i + 1 }}</td>
+                            <td>{{ obj.descricao | summary}}</td>
+                            <td style="text-align: center; width: 110px">{{ obj.data | date: 'dd/MM/yyyy' }}</td>
+                            <td style="text-align: right; width: 110px">{{ obj.valor | currency:'BRL':'R$':'1.2-2' }}</td>
+                            <td style="width: 50px">
+                                <button pButton icon="fa fa-search" pTooltip="Detalhes" tooltipPosition="top" (click)="openDespesa(obj)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="5">
+                                Nenhuma despesa encontrada.
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+            <p-footer>
+                <button type="button" pButton icon="pi pi-plus" (click)="onAddDespesa()" label="Cadastrar"></button>
+            </p-footer>
+        </p-dialog>
+
+        <p-dialog header="{{ editDespesa ? 'Detalhes Despesa' : 'Cadastrar Despesa' }}" [(visible)]="dialogDespesa"
+            [modal]="true" [responsive]="true" showEffect="fade" [modal]="true" width="370" (onAfterHide)="onDialogHideDespesa()">
+
+            <form class="ui-g form-group" autocomplete="off" [formGroup]="formulario" (ngSubmit)="saveDespesa()">
+
+                <div class="ui-g-12 ui-md-12">
+                    <label for="data">Data</label>
+                </div>
+                <div class="ui-g-12 ui-md-12">
+                    <p-calendar id="data" formControlName="data" [readonlyInput]="true" [locale]="pt" dateFormat="dd/mm/yy"
+                        [showIcon]="false"></p-calendar>
+                    <div *ngIf="submitted && f.data.errors">
+                        <div *ngIf="f.data.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe
+                            a
+                            data.
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="ui-g-12 ui-md-12">
+                    <label for="valor">Valor</label>
+                </div>
+                <div class="ui-g-12 ui-md-12">
+                    <input pInputText id="valor" type="text" formControlName="valor" currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
+                    <div *ngIf="submitted && f.valor.errors">
+                        <div *ngIf="f.valor.errors.required" class="ui-message ui-messages-error ui-corner-all">Informe
+                            o
+                            valor.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-g-12 ui-md-12">
+                    <label for="descricao">Descrição</label>
+                </div>
+                <div class="ui-g-12 ui-md-12">
+                    <textarea pInputTextarea id="descricao" style="width: 100%;" [rows]="5" [cols]="1" autoResize="autoResize"
+                        formControlName="descricao"></textarea>
+                    <div *ngIf="submitted && f.descricao.errors">
+                        <div *ngIf="f.descricao.errors.required" class="ui-message ui-messages-error ui-corner-all">Descreva
+                            o serviço.
+                        </div>
+                    </div>
+                </div>
+
+                <p-footer>
+                    <button *ngIf="!editDespesa" type="submit" pButton icon="pi pi-plus" label="Savar"></button>
+                    <button *ngIf="editDespesa" type="button" class="ui-button-danger" pButton icon="pi pi-trash" label="Remover"
+                        (click)="onRemoveDespesa(this.formulario.get('id').value)"></button>
+                </p-footer>
+            </form>
+        </p-dialog>
+
+        <p-dialog header="Hístorico Contratos" [(visible)]="dialogContratos" [modal]="true" [responsive]="true"
+            showEffect="fade" [modal]="true" width="700" (onAfterHide)="onDialogHideContratos()">
+
+            <div class="ui-g-12 ui-md-12">
+                <p-table [value]="listContratos" [responsive]="true" [scrollable]="true" scrollHeight="200px">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 40px">#</th>
+                            <th style="width: 110px">Dt. Início</th>
+                            <th style="width: 110px">Dt. Fim</th>
+                            <th style="width: 40px">D.</th>
+                            <th style="width: 110px">V. Aluguel</th>
+                            <th style="width: 110px">Situação</th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-obj let-i="rowIndex">
+                        <tr>
+                            <td style="width: 40px">{{ i + 1 }}</td>
+                            <td style="text-align: center; width: 110px">{{ obj.dataInicio | date: 'dd/MM/yyyy' }}</td>
+                            <td style="text-align: center; width: 110px">{{ obj.dataFim | date: 'dd/MM/yyyy' }}</td>
+                            <td style="width: 40px">{{ calcDiff(obj.dataInicio, obj.dataFim) }}</td>
+                            <td style="text-align: right; width: 110px">{{ obj.valorAluguel | currency:'BRL':'R$':'1.2-2' }}</td>
+                            <td style="text-align: center; width: 110px">{{ obj.situacao }}</td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="5">
+                                Nenhum contrato encontrado.
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </p-dialog>
+
+    </div>
+</div>

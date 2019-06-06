@@ -1,0 +1,121 @@
+<div class="ui-g ui-fluid">
+
+  <div class="ui-g-12 ui-lg-6">
+    <div class="card no-margin">
+      <h1 class="centerText">Imóveis</h1>
+      <p-chart type="doughnut" [data]="dataImoveis"></p-chart>
+    </div>
+  </div>
+
+  <div *ngIf="auth.temPermissao('ROLE_NOTIFICACOES')" class="ui-g-12 ui-lg-6">
+    <div class="card no-margin">
+      <h1 class="centerText">Rendimentos</h1>
+      <p-chart type="line" [data]="dataRendimentos"></p-chart>
+    </div>
+  </div>
+
+  <div class="ui-g-12 ui-lg-6">
+    <div class="card no-margin">
+      <h1 class="centerText">Aluguéis Vencidos</h1>
+      <p-table [value]="listAlugueis" [responsive]="true" #tabela>
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 40px">#</th>
+            <th>Dt. Vencimento</th>
+            <th>Valor</th>
+            <th class="col-acoes-header"></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-obj let-i="rowIndex">
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td class="col-data-body">{{ obj.dtVencimento | date: 'dd/MM/yyyy' }}</td>
+            <td class="col-right-body">{{ obj.valor | currency:'BRL':'R$':'1.2-2' }}</td>
+            <td class="col-acoes">
+              <button pButton class="btn-acoes" icon="fa fa-arrow-right" pTooltip="Receber" tooltipPosition="top" (click)="openDialog(obj)"></button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4">
+              Não há nenhum aluguel vencido.
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <p-dialog header="Receber Aluguel" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" width="340" (onAfterHide)="onDialogHide()">
+    <div class="ui-g" *ngIf="selectedAluguel">
+      <div class="ui-g-4">Imóvel: </div>
+      <div class="ui-g-8" style="text-align: right;">{{ selectedAluguel.contrato.imovel.logradouro }}</div>
+
+      <div class="ui-g-4">Locatário: </div>
+      <div class="ui-g-8" style="text-align: right;">{{ selectedAluguel.contrato.locatario1.nome }}</div>
+
+      <div class="ui-g-4">N° Locatário: </div>
+      <div class="ui-g-8" style="text-align: right;">{{ selectedAluguel.contrato.locatario1.telefone }}</div>
+
+      <div class="ui-g-4">Vencimento: </div>
+      <div class="ui-g-8" style="text-align: right;">{{ selectedAluguel.dtVencimento | date: 'dd/MM/yyyy' }}</div>
+
+      <!-- <div class="ui-g-4">UPTU: </div>
+      <div class="ui-g-8" style="text-align: right">{{ selectedAluguel.iptu | currency:'BRL':'R$':'1.2-2' }}</div> -->
+
+      <div class="ui-g-4">Valor: </div>
+      <div class="ui-g-8" style="text-align: right">{{ selectedAluguel.valor | currency:'BRL':'R$':'1.2-2' }}</div>
+
+      <div class="ui-g-4">Desconto: </div>
+      <div class="ui-g-8" style="text-align: right">{{ selectedAluguel.desconto | currency:'BRL':'R$':'1.2-2' }}</div>
+
+      <div class="ui-g-4">Total: </div>
+      <div class="ui-g-8" style="text-align: right; font-weight: bold">{{ selectedAluguel.total | currency:'BRL':'R$':'1.2-2' }}</div>
+    </div>
+
+    <p-footer>
+      <button type="button" pButton icon="pi pi-check" (click)="receber(selectedAluguel)" label="Receber"></button>
+      <button type="button" pButton icon="fa fa-times" (click)="onDialogHide()" label="Cancelar" class="ui-button-secondary"></button>
+    </p-footer>
+
+  </p-dialog>
+
+  <div class="ui-g-12 ui-lg-6">
+    <div class="card no-margin">
+      <h1 class="centerText">Contratos Vencidos</h1>
+      <p-table [value]="listContrato" [responsive]="true" #tabela>
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 40px">#</th>  
+            <th style="width: 150px">Dt. Vencimento</th>
+            <th>End. Imóvel</th>
+            <th class="col-acoes-header"></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-obj let-i="rowIndex">
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td class="col-data-body">{{ obj.dataFim | date: 'dd/MM/yyyy' }}</td>
+            <td class="col-data-body">{{ obj.imovel.logradouro }}</td>
+            <td class="col-acoes">
+              <button pButton class="btn-acoes" icon="fa fa-arrow-right" pTooltip="Buscar" tooltipPosition="top" [routerLink]="['/contratos', obj.id]"></button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4">
+              Não há nenhum contrato vencido.
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+</div>
